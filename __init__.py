@@ -14,13 +14,19 @@ def enregistrer_log(ip_address, username, status):
     conn.commit()
     conn.close()
 
-# Fonction pour compter les échecs récents en BDD
-def nombre_echecs_recents(ip_address, periode=300):  # 300 secondes = 5 minutes
+# Fonction pour compter les échecs récents en BDD (même IP + même utilisateur)
+def nombre_echecs_recents(ip_address, username, periode=300):  # 300 secondes = 5 minutes
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     temps_limite = int(time.time()) - periode
-    cursor.execute("SELECT COUNT(*) FROM logs WHERE ip_address = ? AND status = 'failure' AND timestamp > ?", 
-                   (ip_address, temps_limite))
+    cursor.execute("""
+        SELECT COUNT(*) FROM logs 
+        WHERE ip_address = ? 
+        AND username = ? 
+        AND status = 'failure' 
+        AND timestamp > ?
+    """, (ip_address, username, temps_limite))
+    
     nombre_echecs = cursor.fetchone()[0]
     conn.close()
     return nombre_echecs
@@ -29,13 +35,13 @@ def nombre_echecs_recents(ip_address, periode=300):  # 300 secondes = 5 minutes
 def authentification():
     ip_address = request.remote_addr  # Récupérer l'IP du client
 
-    # Vérifier le nombre d'échecs récents
-    if nombre_echecs_recents(ip_address) >= 3:
-        return "Trop de tentatives de connexion échouées. Veuillez réessayer plus tard.", 403
-
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
+        # Vérifier si l'utilisateur + IP ont trop d'échecs récents
+        if nombre_echecs_recents(ip_address, username) >= 3:
+            return "Trop de tentatives de connexion échouées. Veuillez réessayer plus tard.", 403
 
         if username == 'admin' and password == 'password':  # Remplace par une vraie vérification en BDD
             session['authentifie'] = True
@@ -46,6 +52,7 @@ def authentification():
             return render_template('formulaire_authentification.html', error=True)
 
     return render_template('formulaire_authentification.html', error=False)
+
 
 
 if __name__ == "__main__":
