@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------------------------------
-PROJET CLOE855
+PROJET CLOE855 CICD
 ------------------------------------------------------------------------------------------------------
 Quelles sont les notions qui vont être abordées au cours de cet atelier ?  
 Ce support a été créé pour vous accompagner dans la réalisation de votre atelier "développer et sécuriser une solution cloud". Il s'agit ici de concevoir et sécuriser des solutions d'infrastructure virtualisées et cloud. Plus précisement, cet atelier a pour objectif de mettre en pratique vos connaissances informatiques liées à la sécurisation d’une infrastructure IT virtualisée. Il s'agit d'une étude de cas concernant une entreprise « fictive » ayant un besoin de sécuriser sa solution cloud. Dans cette étude de cas vous devrez réaliser :
