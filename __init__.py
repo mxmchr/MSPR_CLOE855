@@ -1,8 +1,8 @@
-from flask import Flask, render_template_string, render_template, jsonify, request, redirect, url_for, session
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 import sqlite3
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__)                                                                                                                  
+app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
 
 # Fonction pour créer une clé "authentifie" dans la session utilisateur
@@ -11,14 +11,18 @@ def est_authentifie():
 
 # Fonction pour enregistrer la connexion dans la base de données avec statut et méthode d'authentification
 def log_connexion(username, ip_address, statut_connexion, method_authentification):
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-    INSERT INTO logs_connexions (username, ip_address, statut_connexion, method_authentification) 
-    VALUES (?, ?, ?, ?)
-    ''', (username, ip_address, statut_connexion, method_authentification))
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+        INSERT INTO logs_connexions (username, ip_address, statut_connexion, method_authentification) 
+        VALUES (?, ?, ?, ?)
+        ''', (username, ip_address, statut_connexion, method_authentification))
+        
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as e:
+        print(f"Erreur lors de l'insertion dans la base de données : {e}")
 
 # Route pour afficher les logs de connexions
 @app.route('/logs')
