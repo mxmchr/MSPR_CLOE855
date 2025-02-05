@@ -19,6 +19,21 @@ def log_connexion(username, ip_address):
     conn.commit()
     conn.close()
 
+# Route pour afficher les logs de connexions
+@app.route('/logs')
+def afficher_logs():
+    # Connexion à la base de données
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    
+    # Récupération des logs de connexion
+    cursor.execute('SELECT * FROM logs_connexions ORDER BY date_connexion DESC')
+    logs = cursor.fetchall()
+    conn.close()
+    
+    # Rendre la page avec les logs
+    return render_template('logs.html', logs=logs)
+
 @app.route('/')
 def hello_world():
     return render_template('hello.html')
