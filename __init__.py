@@ -9,13 +9,14 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
 def est_authentifie():
     return session.get('authentifie')
 
-# Fonction pour enregistrer la connexion dans la base de données
-def log_connexion(username, ip_address):
+# Fonction pour enregistrer la connexion dans la base de données avec statut et méthode d'authentification
+def log_connexion(username, ip_address, statut_connexion, method_authentification):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('''
-    INSERT INTO logs_connexions (username, ip_address) VALUES (?, ?)
-    ''', (username, ip_address))
+    INSERT INTO logs_connexions (username, ip_address, statut_connexion, method_authentification) 
+    VALUES (?, ?, ?, ?)
+    ''', (username, ip_address, statut_connexion, method_authentification))
     conn.commit()
     conn.close()
 
@@ -56,11 +57,13 @@ def authentification():
         # Vérifier les identifiants
         if username == 'admin' and password == 'password':  # password à cacher par la suite
             session['authentifie'] = True
-            # Loguer la connexion
-            log_connexion(username, request.remote_addr)
+            # Loguer la connexion avec le statut "succès" et la méthode "formulaire"
+            log_connexion(username, request.remote_addr, "succès", "formulaire")
             # Rediriger vers la route lecture après une authentification réussie
             return redirect(url_for('lecture'))
         else:
+            # Loguer l'échec de la connexion avec la méthode "formulaire"
+            log_connexion(username, request.remote_addr, "échec", "formulaire")
             # Afficher un message d'erreur si les identifiants sont incorrects
             return render_template('formulaire_authentification.html', error=True)
 

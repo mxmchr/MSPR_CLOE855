@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS logs_connexions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL,
     ip_address TEXT NOT NULL,
-    date_connexion DATETIME DEFAULT CURRENT_TIMESTAMP
+    date_connexion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    statut_connexion TEXT NOT NULL,  -- Statut de la connexion (succès ou échec)
+    method_authentification TEXT  -- Méthode d'authentification, par exemple "formulaire", "oauth", etc.
 )
 ''')
 
@@ -27,11 +29,6 @@ cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('LAM
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('GAGNON', 'Nicolas', '456, Boulevard des Cerisiers, 69003 Lyon'))
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('DUBOIS', 'Charlotte', '789, Rue des Roses, 13005 Marseille'))
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)", ('LEFEVRE', 'Thomas', '333, Rue de la Paix, 75002 Paris'))
-
-# Insertion de données dans la table des logs de connexions (log fictif pour l'exemple)
-cur.execute("INSERT INTO logs_connexions (username, ip_address) VALUES (?, ?)", ('admin', '192.168.1.1'))
-cur.execute("INSERT INTO logs_connexions (username, ip_address) VALUES (?, ?)", ('admin', '192.168.1.2'))
-cur.execute("INSERT INTO logs_connexions (username, ip_address) VALUES (?, ?)", ('admin', '192.168.1.3'))
 
 # Commit des changements
 connection.commit()
